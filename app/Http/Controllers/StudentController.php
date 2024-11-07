@@ -29,35 +29,67 @@ class StudentController extends Controller
             'message' => 'Data berhasil ditambah',
             'data' => $student
         ];
-
         return response()->json($data, 200);
     }
+
     public function update(Request $request, $id) {
-        $student = Student::find($id);
-    
-        $student->nama = $request->nama;
-        $student->nim = $request->nim;
-        $student->email = $request->email;
-        $student->jurusan = $request->jurusan;
-        $student->save();
-        
+    $student = Student::find($id);
+    if ($student) {
+        $input = [
+            'nama' => $request->nama ?? $student->nama,
+            'nim' => $request->nim ?? $student->nim,
+            'email' => $request->email ?? $student->email,
+            'jurusan' => $request->jurusan ?? $student->jurusan
+        ];
+
+        $student->update($input);
+
         $data = [
-            'message' => 'Data berhasil dirubah',
+            'message' => 'Student is updated',
             'data' => $student
         ];
-    
         return response()->json($data, 200);
-    }
-    
-    public function destroy($id) {
-        $student = Student::find($id);
-        $student->delete();
-        
+    } else {
         $data = [
-            'message' => 'Data berhasil dihapus'
+            'message' => 'Student not found'
         ];
+        return response()->json($data, 404);
+    }
+}
+
     
-        return response()->json($data, 200);
+    public function destroy($id)
+    {
+        $student = Student::find($id);
+        if ($student) {
+            $student->delete();
+            $data = [
+                'message' => 'Data berhasil dihapus',
+                'data' => $student
+            ];
+            return response()->json($data, 200);
+        } else {
+            $data = [
+                'message' => 'Data tidak terhapus'
+            ];
+            return response()->json($data, 404);
+        }
+    }
+
+    public function show(Request $request, $id){
+        $student = Student::find($id);
+        if($student){
+            $data = [
+                'message' => 'Get detail data',
+                'data' => $student
+            ];
+            return response()->json($data, 200);
+        } else {
+            $data = [
+                'message' => 'Data tidak ditemukan',
+            ];
+            return response()->json($data, 404);
+        } 
     }
     
 }

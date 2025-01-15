@@ -1,4 +1,5 @@
 // import AlumniController
+const AlumniController = require("../controllers/AlumniController");
 
 // import express
 const express = require("express");

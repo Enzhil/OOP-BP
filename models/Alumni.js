@@ -2,27 +2,23 @@
 const db = require("../config/database");
 
 class Alumni {
-  /**
-   * Mendapatkan semua data alumni
-   */
+
   static all() {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM alumni";
       db.query(sql, (err, results) => {
-        if (err) reject(err);
+        if (err) reject(new Error("Failed to search alumni: " + err.message));
         resolve(results);
       });
     });
   }
 
-  /**
-   * Membuat data alumni baru
-   */
+ 
   static async create(data) {
     const id = await new Promise((resolve, reject) => {
       const sql = "INSERT INTO alumni SET ?";
       db.query(sql, data, (err, results) => {
-        if (err) reject(err);
+        if (err) reject(new Error("Failed to search alumni: " + err.message));
         resolve(results.insertId);
       });
     });
@@ -30,14 +26,12 @@ class Alumni {
     return alumni;
   }
 
-  /**
-   * Memperbarui data alumni berdasarkan ID
-   */
+ 
   static async update(id, data) {
     await new Promise((resolve, reject) => {
       const sql = "UPDATE alumni SET ? WHERE id = ?";
       db.query(sql, [data, id], (err, results) => {
-        if (err) reject(err);
+        if (err) reject(new Error("Failed to search alumni: " + err.message));
         resolve(results);
       });
     });
@@ -45,32 +39,50 @@ class Alumni {
     return alumni;
   }
 
-  /**
-   * Menghapus data alumni berdasarkan ID
-   */
+  
   static delete(id) {
     return new Promise((resolve, reject) => {
       const sql = "DELETE FROM alumni WHERE id = ?";
       db.query(sql, id, (err, results) => {
-        if (err) reject(err);
+        if (err) reject(new Error("Failed to search alumni: " + err.message));
         resolve(results);
       });
     });
   }
 
-  /**
-   * Menemukan alumni berdasarkan ID
-   */
+  
   static find(id) {
     return new Promise((resolve, reject) => {
       const sql = "SELECT * FROM alumni WHERE id = ?";
       db.query(sql, id, (err, results) => {
-        if (err) reject(err);
+        if (err) reject(new Error("Failed to search alumni: " + err.message));
         const [alumni] = results;
         resolve(alumni);
       });
     });
   }
+
+  static search(name) {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM alumni WHERE name LIKE ?";
+      db.query(sql, [`%${name}%`], (err, results) => {
+        if (err) reject(new Error("Failed to search alumni: " + err.message)); 
+        const [alumni] = results; 
+        resolve(alumni); 
+      });
+    });
+  }
+
+  static findByStatus(status = "") {
+    return new Promise((resolve, reject) => {
+      const sql = "SELECT * FROM alumni WHERE status LIKE ?";
+      db.query(sql, [`%${status}%`], (err, results) => {
+        if (err) reject(new Error("Failed to search alumni: " + err.message)); 
+        resolve(results); 
+      });
+    });
+  }
+  
 }
 
 module.exports = Alumni;
